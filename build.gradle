@@ -26,6 +26,20 @@ repositories {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.postgresql:postgresql:9.4-1201-jdbc41')
+	//compile('javax.xml.bind:jaxb-api')
+	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+	compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
+	compile group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
+	compile group: 'javax.activation', name: 'activation', version: '1.1.1'
+	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.3.3.Final'
+	compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.3.3.Final'
+	compile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.11.Final'
+	compile('io.springfox:springfox-swagger2:2.9.2')
+	compile('io.springfox:springfox-swagger-ui:2.9.2')
+	//compile('org.modelmapper:modelmapper:2.3.2')
   compile('org.projectlombok:lombok:1.18.2')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+
 }

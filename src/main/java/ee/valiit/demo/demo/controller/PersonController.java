@@ -1,48 +1,53 @@
 package ee.valiit.demo.demo.controller;
 
-
-import ee.valiit.demo.demo.model.Person;
+import ee.valiit.demo.demo.dto.PersonDto;
 import ee.valiit.demo.demo.service.PersonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.websocket.server.PathParam;
-import javax.xml.ws.WebServiceException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+
 
 @Slf4j
 @RestController
-@RequestMapping("/person")
 public class PersonController {
 
 
   @Autowired PersonService personService;
 
-  @RequestMapping(value = "/{socialSecurityId:[\\d]+}", method = RequestMethod.GET)
-  public Person getPerson(@PathVariable Long socialSecurityId){
+  @RequestMapping(value = "", method = RequestMethod.GET)
+  public List<PersonDto> getAll(){
+    return personService.getAll();
+  }
+
+  @RequestMapping(value = "/person/{socialSecurityId:[\\d]+}", method = RequestMethod.GET)
+  public PersonDto getPerson(@PathVariable String socialSecurityId){
     log.info("kas kood jouab siia {}", socialSecurityId);
     return personService.getPerson(socialSecurityId);
 
   }
 
-  @RequestMapping(value = "/{firstName:[\\D]+}", method = RequestMethod.GET)
-  public Collection<Person> getName(@PathVariable String firstName){
+  @RequestMapping(value = "/person/{firstName:[\\D]+}", method = RequestMethod.GET)
+  public List<PersonDto> getByFirstName(@PathVariable String firstName){
     log.info("kas kood jõuab nimeni {}", firstName);
-    return personService.getName(firstName);
+    return personService.getByFirstName(firstName);
   }
 
-  @RequestMapping(value = "", method = RequestMethod.POST)
-    public void addPerson(@RequestBody Person person){
-    personService.addPerson(person);
+
+  @RequestMapping(value = "/", method = RequestMethod.POST)
+    public void addPerson(@RequestBody PersonDto item){
+    personService.addPerson(item);
   }
 
-  @RequestMapping(value = "/{socialSecurityId:[\\d]+}", method = RequestMethod.PUT)
-    public void editName(@RequestBody Person value){
-      personService.editName(value);
+  @RequestMapping(value = "/person/{socialSecurityId:[\\d]+}", method = RequestMethod.PUT)
+    public void editName(@PathVariable String socialSecurityId, @RequestBody PersonDto value){
+    personService.editName(value);
+
+  }
+
+  @RequestMapping(value = "/person/{socialSecurityId:[\\d]+}", method = RequestMethod.DELETE)
+  public void deletePerson(@PathVariable String socialSecurityId){
+    personService.deletePerson(socialSecurityId);
 
   }
 }
