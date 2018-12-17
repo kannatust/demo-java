@@ -1,7 +1,7 @@
 package ee.valiit.demo.demo.service;
 
 import ee.valiit.demo.demo.model.Person;
-import ee.valiit.demo.demo.dto.PersonDto;
+import ee.valiit.demo.demo.dto.person.PersonDto;
 import ee.valiit.demo.demo.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;

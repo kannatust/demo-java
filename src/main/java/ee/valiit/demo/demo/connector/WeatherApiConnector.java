@@ -1,17 +1,12 @@
 package ee.valiit.demo.demo.connector;
-import ee.valiit.demo.demo.dto.WeatherDto;
-import ee.valiit.demo.demo.model.Weather;
+import ee.valiit.demo.demo.dto.weather.WeatherDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
-import springfox.documentation.service.ResponseMessage;
 
 @Slf4j
 @Service

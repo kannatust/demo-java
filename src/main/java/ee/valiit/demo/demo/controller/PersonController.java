@@ -1,6 +1,6 @@
 package ee.valiit.demo.demo.controller;
 
-import ee.valiit.demo.demo.dto.PersonDto;
+import ee.valiit.demo.demo.dto.person.PersonDto;
 import ee.valiit.demo.demo.service.PersonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

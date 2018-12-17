@@ -2,7 +2,7 @@ package ee.valiit.demo.demo.service;
 
 
 import ee.valiit.demo.demo.connector.WeatherApiConnector;
-import ee.valiit.demo.demo.dto.WeatherDto;
+import ee.valiit.demo.demo.dto.weather.WeatherDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,5 +21,7 @@ public class WeatherService {
     public WeatherDto getWeather(String city) {
     return weatherApiConnector.getWeather(city);
     }
+
+
 
 }

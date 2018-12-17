@@ -2,10 +2,10 @@ package ee.valiit.demo.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ee.valiit.demo.demo.dto.Clouds;
-import ee.valiit.demo.demo.dto.Coord;
-import ee.valiit.demo.demo.dto.Temps;
-import ee.valiit.demo.demo.dto.Wind;
+import ee.valiit.demo.demo.dto.weather.Clouds;
+import ee.valiit.demo.demo.dto.weather.Coord;
+import ee.valiit.demo.demo.dto.weather.Temps;
+import ee.valiit.demo.demo.dto.weather.Wind;
 import lombok.Data;
 
 @Data

@@ -1,7 +1,7 @@
 /*
 package ee.valiit.demo.demo.Person;
 
-import ee.valiit.demo.demo.dto.PersonDto;
+import ee.valiit.demo.demo.dto.person.PersonDto;
 import ee.valiit.demo.demo.model.Person;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;

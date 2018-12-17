@@ -1,4 +1,4 @@
-package ee.valiit.demo.demo.dto;
+package ee.valiit.demo.demo.dto.person;
 
 import lombok.Data;
 
