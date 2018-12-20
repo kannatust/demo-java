@@ -7,8 +7,8 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Temps {
     Double temp;
-    Integer pressure;
+    //Integer pressure;
     Integer humidity;
-    Integer tempMin;
-    Integer tempMax;
+    //Integer tempMin;
+    //Integer tempMax;
 }

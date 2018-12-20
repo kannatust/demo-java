@@ -1,5 +1,7 @@
 package ee.valiit.demo.demo.connector;
+import ee.valiit.demo.demo.dto.city.CityDto;
 import ee.valiit.demo.demo.dto.weather.WeatherDto;
+import ee.valiit.demo.demo.model.weather.Weather;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

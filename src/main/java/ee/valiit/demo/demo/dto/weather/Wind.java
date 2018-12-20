@@ -7,5 +7,5 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Wind {
     Double speed;
-    Integer deg;
+    //Integer deg;
 }

@@ -6,6 +6,7 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -20,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 
 @EnableWebMvc
 @Configuration
+@EnableScheduling
 @EnableSwagger2
 public class DemoConfig extends WebMvcConfigurerAdapter {
 
