@@ -13,10 +13,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+<<<<<<< HEAD
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
+import static java.lang.Integer.parseInt;
+=======
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+>>>>>>> origin/master
 
 @Slf4j
 @Service
@@ -31,6 +43,11 @@ public class WeatherService {
     @Autowired
     CityRepository cityRepository;
 
+<<<<<<< HEAD
+    @PersistenceContext
+    private EntityManager em;
+=======
+>>>>>>> origin/master
 
     public WeatherDto getWeather(String city) {
     return weatherApiConnector.getWeather(cityTemp(city));
@@ -54,15 +71,42 @@ public class WeatherService {
         return weatherStats;
     }
 
+<<<<<<< HEAD
+    public List<WeatherByDate> getTempsByDate(String dateInput){
+
+        List<Weather> weatherForDate = weatherRepository.findByDate(dateInput);
+        log.info("kas kuupäeva kohta on baasis info? {}", weatherForDate);
+
+        List<WeatherByDate> weatherStatsByDate = new ArrayList<>();
+        for (Weather source : weatherForDate){
+            WeatherByDate target = new WeatherByDate();
+            City city = cityRepository.findById(source.getCityId());
+            target.setName(city.getName());
+            target.setTemp(source.getTemp());
+            weatherStatsByDate.add(target);
+            log.info("mis siin juhtub {}", target);
+        }
+        return weatherStatsByDate;
+
+    }
+
+=======
+>>>>>>> origin/master
     private Integer getCityId(String city){
         Optional<City> cityFound = cityRepository.findByName(cityTemp(city));
         if (cityFound.isPresent()) {}
         return cityFound.get().getId();
     }
+<<<<<<< HEAD
+    @Scheduled(cron ="0 0 * * * *")
+    public void saveWeatherTask() {
+        Iterable<City> cities = cityRepository.findAll();
+=======
     @Scheduled(fixedRate = 10000)
     public void saveWeatherTask() {
         Iterable<City> cities = cityRepository.findAll();
         log.info("cities {}", cities);
+>>>>>>> origin/master
         for (City city : cities) {
             log.info("city.getName: {}", city.getName());
             saveWeather(city.getName());
@@ -93,6 +137,38 @@ public class WeatherService {
         return s;
     }
 
+<<<<<<< HEAD
+    public LocalDate dateTimeToDate(LocalDateTime dateTime){
+        return (dateTime == null ? null : dateTime.toLocalDate());
+    }
+
+    public Date StringToDate(String date) {
+        //java.sql.Date localDate = java.sql.Date.valueOf(date);
+        return (date == null ? null : java.sql.Date.valueOf(date));
+        //return ( date == null ? null : LocalDate.parse(date));
+    }
+
+  /* public List<WeatherByDate> getMaxTemps (ArrayList list){
+
+      // List<WeatherByDate> weatherForCityByDateList = new ArrayList<>();
+        List<WeatherByDate> allByDate = new ArrayList(list);
+        for (WeatherByDate source : allByDate) {
+            List<WeatherByDate> weatherForCityByDateList = allByDate.stream().filter(x -> x.getName().equals(source.getName())).collect(Collectors.toList());
+        }
+        for (WeatherByDate source : weatherForCityByDateList) {
+            List<WeatherByDate> maxByTemp = weatherForCityByDateList.max(Comparator.comparing(WeatherByDate::getTemp))
+                    .orElseThrow(NoSuchElementException::new);
+            List<WeatherByDate> maxByTemp = new ArrayList<>();
+            maxByTemp.add()
+        }
+
+        }
+    return list;
+*/
+
+
+
+=======
 /*
     public LocalDateTime formattedDate (LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -101,4 +177,5 @@ public class WeatherService {
     }
 */
 
+>>>>>>> origin/master
 }
