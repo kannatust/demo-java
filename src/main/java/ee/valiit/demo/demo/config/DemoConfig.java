@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 @EnableScheduling
 @EnableSwagger2
+
 public class DemoConfig extends WebMvcConfigurerAdapter {
 
 

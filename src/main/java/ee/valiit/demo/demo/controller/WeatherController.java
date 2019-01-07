@@ -1,19 +1,15 @@
 package ee.valiit.demo.demo.controller;
 
-import ee.valiit.demo.demo.dto.city.CityDto;
-import ee.valiit.demo.demo.dto.weather.WeatherDto;
+import ee.valiit.demo.demo.dto.weather.WeatherByDate;
 import ee.valiit.demo.demo.dto.weather.WeatherStats;
-import ee.valiit.demo.demo.model.city.City;
-import ee.valiit.demo.demo.model.weather.Weather;
 import ee.valiit.demo.demo.service.WeatherService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -24,27 +20,36 @@ public class WeatherController {
     WeatherService weatherService;
 
 
-
-/*
-   @RequestMapping(value = "/weather/{city}", method = RequestMethod.GET)
-    public WeatherDto getWeather(@PathVariable String city){
-        log.info("kas kood jouab siia {}", city);
-        return weatherService.getWeather(city);
-*/
-
-
-    @RequestMapping(value = "/weather/{city}", method = RequestMethod.GET)
+    @RequestMapping(value = "/weather/{city:[\\D]}", method = RequestMethod.GET)
     public List<WeatherStats> getStats(@PathVariable String city) {
         log.info("kas kood jouab siia {}", city);
         return weatherService.getStats(city);
 
     }
 
-    /*
-    Välja kommenteeritud, kuna @scheduled teeb automaatselt sama asja
-    @RequestMapping(value = "/weather/{city}", method = RequestMethod.POST)
-    public void saveWeather(@PathVariable String city) {
-        weatherService.saveWeather(city);
-    }*/
+    @RequestMapping(value = "/weather/{dateInput}/{minOrMax}", method = RequestMethod.GET)
+    public List<WeatherByDate> getTempsByDate(@PathVariable String dateInput, @PathVariable Boolean isMax){
+        /*if (isMax == true) {
+            List<WeatherByDate> all = weatherService.getTempsByDate(dateInput);
+            for (WeatherByDate source : all ){
+
+                all.stream()
+                        .max(Comparator.comparing(WeatherByDate::getTemp))
+                        .orElseThrow(NoSuchElementException::new);
+                List<WeatherByDate> maxByTemp = new ArrayList<>();
+                maxByTemp.add()
+            }
+
+            WeatherByDate maxByTemp = weatherService.getTempsByDate(dateInput)
+            return weatherService.getTempsByDate(dateInput).stream()
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                    .entrySet().stream().filter(x -> x.getValue() == 1 )
+                    .map(x -> x.getKey())
+                    .collect(Collectors.toList());
+         }
+*/
+        return weatherService.getTempsByDate(dateInput);
+    }
+
 }
 

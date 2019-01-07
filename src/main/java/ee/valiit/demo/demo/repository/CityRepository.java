@@ -7,9 +7,5 @@ import java.util.Optional;
 
 public interface CityRepository extends CrudRepository<City, String> {
     Optional<City> findByName(String name);
-<<<<<<< HEAD
      City findById(Integer id);
-=======
-     Optional<City> findById(Integer id);
->>>>>>> origin/master
 }

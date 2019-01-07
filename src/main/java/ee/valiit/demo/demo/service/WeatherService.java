@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-<<<<<<< HEAD
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,12 +22,6 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
-=======
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
->>>>>>> origin/master
 
 @Slf4j
 @Service
@@ -43,11 +36,8 @@ public class WeatherService {
     @Autowired
     CityRepository cityRepository;
 
-<<<<<<< HEAD
     @PersistenceContext
     private EntityManager em;
-=======
->>>>>>> origin/master
 
     public WeatherDto getWeather(String city) {
     return weatherApiConnector.getWeather(cityTemp(city));
@@ -71,7 +61,6 @@ public class WeatherService {
         return weatherStats;
     }
 
-<<<<<<< HEAD
     public List<WeatherByDate> getTempsByDate(String dateInput){
 
         List<Weather> weatherForDate = weatherRepository.findByDate(dateInput);
@@ -90,23 +79,14 @@ public class WeatherService {
 
     }
 
-=======
->>>>>>> origin/master
     private Integer getCityId(String city){
         Optional<City> cityFound = cityRepository.findByName(cityTemp(city));
         if (cityFound.isPresent()) {}
         return cityFound.get().getId();
     }
-<<<<<<< HEAD
     @Scheduled(cron ="0 0 * * * *")
     public void saveWeatherTask() {
         Iterable<City> cities = cityRepository.findAll();
-=======
-    @Scheduled(fixedRate = 10000)
-    public void saveWeatherTask() {
-        Iterable<City> cities = cityRepository.findAll();
-        log.info("cities {}", cities);
->>>>>>> origin/master
         for (City city : cities) {
             log.info("city.getName: {}", city.getName());
             saveWeather(city.getName());
@@ -137,7 +117,6 @@ public class WeatherService {
         return s;
     }
 
-<<<<<<< HEAD
     public LocalDate dateTimeToDate(LocalDateTime dateTime){
         return (dateTime == null ? null : dateTime.toLocalDate());
     }
@@ -168,14 +147,4 @@ public class WeatherService {
 
 
 
-=======
-/*
-    public LocalDateTime formattedDate (LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        String s = dateTime.toString();
-        return LocalDateTime.parse(s, formatter);
-    }
-*/
-
->>>>>>> origin/master
 }

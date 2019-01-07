@@ -16,7 +16,6 @@ public class WeatherStats {
     private LocalDateTime dateTime;
     @JsonProperty("Temperature")
     private Double temp;
-    //private String generalDescription;
     @JsonProperty("Conditions")
     private String description;
     @JsonProperty("Wind speed")
