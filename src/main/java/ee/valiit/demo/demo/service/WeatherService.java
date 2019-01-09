@@ -1,6 +1,5 @@
 package ee.valiit.demo.demo.service;
 
-
 import ee.valiit.demo.demo.connector.WeatherApiConnector;
 import ee.valiit.demo.demo.dto.weather.*;
 import ee.valiit.demo.demo.model.city.City;
@@ -9,19 +8,14 @@ import ee.valiit.demo.demo.repository.CityRepository;
 import ee.valiit.demo.demo.repository.WeatherRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
-import static java.lang.Integer.parseInt;
+import static java.util.Collections.max;
+import static java.util.Collections.min;
+
 
 @Slf4j
 @Service
@@ -35,9 +29,6 @@ public class WeatherService {
 
     @Autowired
     CityRepository cityRepository;
-
-    @PersistenceContext
-    private EntityManager em;
 
     public WeatherDto getWeather(String city) {
     return weatherApiConnector.getWeather(cityTemp(city));
@@ -61,9 +52,10 @@ public class WeatherService {
         return weatherStats;
     }
 
+/* pole vaja nüüd, kus on olemas getMaxTemps ja getMinTemps
     public List<WeatherByDate> getTempsByDate(String dateInput){
-
-        List<Weather> weatherForDate = weatherRepository.findByDate(dateInput);
+        log.info("StringToCalendar(dateInput) {}", stringToCalendarStart(dateInput), stringToCalendarEnd(dateInput));
+        List<Weather> weatherForDate = weatherRepository.findByDate(stringToCalendarStart(dateInput), stringToCalendarEnd(dateInput));
         log.info("kas kuupäeva kohta on baasis info? {}", weatherForDate);
 
         List<WeatherByDate> weatherStatsByDate = new ArrayList<>();
@@ -73,16 +65,22 @@ public class WeatherService {
             target.setName(city.getName());
             target.setTemp(source.getTemp());
             weatherStatsByDate.add(target);
-            log.info("mis siin juhtub {}", target);
+            log.info("getTempsByDate meetodist tuli: {}", target);
         }
         return weatherStatsByDate;
 
     }
+*/
 
     private Integer getCityId(String city){
         Optional<City> cityFound = cityRepository.findByName(cityTemp(city));
         if (cityFound.isPresent()) {}
         return cityFound.get().getId();
+    }
+
+    private String getCityName(Integer id) {
+        City cityFound = cityRepository.findById(id);
+        return cityFound.getName();
     }
     @Scheduled(cron ="0 0 * * * *")
     public void saveWeatherTask() {
@@ -117,34 +115,109 @@ public class WeatherService {
         return s;
     }
 
-    public LocalDate dateTimeToDate(LocalDateTime dateTime){
-        return (dateTime == null ? null : dateTime.toLocalDate());
-    }
-
-    public Date StringToDate(String date) {
-        //java.sql.Date localDate = java.sql.Date.valueOf(date);
+    public Date stringToDate(String date) {
         return (date == null ? null : java.sql.Date.valueOf(date));
-        //return ( date == null ? null : LocalDate.parse(date));
     }
 
-  /* public List<WeatherByDate> getMaxTemps (ArrayList list){
+    public Calendar stringToCalendarStart(String dateStr) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(stringToDate(dateStr));
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.HOUR, 0);
+        return cal;
+    }
 
-      // List<WeatherByDate> weatherForCityByDateList = new ArrayList<>();
-        List<WeatherByDate> allByDate = new ArrayList(list);
-        for (WeatherByDate source : allByDate) {
-            List<WeatherByDate> weatherForCityByDateList = allByDate.stream().filter(x -> x.getName().equals(source.getName())).collect(Collectors.toList());
+    public Calendar stringToCalendarEnd(String dateStr) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(stringToDate(dateStr));
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.HOUR, 59);
+        return cal;
+    }
+
+    public List<WeatherByDate> getMaxTemps (String dateStr) {
+        List<WeatherByDate> tempsByCityAndDate = new ArrayList<>();
+        // leian kõik konkreetse kuupäeva tulemused Weather tüüpi listina
+        List<Weather> weatherForDate = weatherRepository.findByDate(stringToCalendarStart(dateStr), stringToCalendarEnd(dateStr));
+
+        // leian linna tulemused
+        Map<Integer, List<Double>> map = findByCityAndDate(weatherForDate);
+
+        // leian linna tulemustest max tempiga tulemuse
+        tempsByCityAndDate = findMaxTemps(map);
+        return tempsByCityAndDate;
+    }
+
+    public List<WeatherByDate> getMinTemps (String dateStr) {
+        List<WeatherByDate> tempsByCityAndDate = new ArrayList<>();
+        // leian kõik konkreetse kuupäeva tulemused Weather tüüpi listina
+        List<Weather> weatherForDate = weatherRepository.findByDate(stringToCalendarStart(dateStr), stringToCalendarEnd(dateStr));
+
+        // leian linna tulemused
+        Map<Integer, List<Double>> map = findByCityAndDate(weatherForDate);
+
+        // leian linna tulemustest min tempiga tulemuse
+        tempsByCityAndDate = findMinTemps(map);
+        return tempsByCityAndDate;
+    }
+
+    public Map<Integer, List<Double>> findByCityAndDate(List<Weather> list) {
+        Map<Integer, List<Double>> resultsByCityAndDate = new HashMap<>();
+
+        for (Weather source : list){
+            WeatherByDate target = new WeatherByDate();
+            target.setName(getCityName(source.getCityId()));
+            target.setTemp(source.getTemp());
+            List<Double> temps = new ArrayList<>();
+            temps.add(target.getTemp());
+            if (!resultsByCityAndDate.containsKey(source.getCityId())) {
+                resultsByCityAndDate.put(source.getCityId(), temps);
+            }
+            else {
+                resultsByCityAndDate.get(source.getCityId()).add(target.getTemp());
+            }
         }
-        for (WeatherByDate source : weatherForCityByDateList) {
-            List<WeatherByDate> maxByTemp = weatherForCityByDateList.max(Comparator.comparing(WeatherByDate::getTemp))
-                    .orElseThrow(NoSuchElementException::new);
-            List<WeatherByDate> maxByTemp = new ArrayList<>();
-            maxByTemp.add()
+        log.info("resultsByCityAndDate sees on: {}", resultsByCityAndDate);
+        return resultsByCityAndDate;
+    }
+
+
+    public List<WeatherByDate> findMaxTemps(Map<Integer, List<Double>> map) {
+        List<WeatherByDate> maxTempList = new ArrayList<>();
+
+        for (Integer key : map.keySet()) {
+            List<Double> value = map.get(key);
+            List<Object> list = new ArrayList<>();
+            list.add(value);
+            log.info("city = {}{}", getCityName(key), list);
+            Double maxTempForCity = max(value);
+            log.info("Max = {}", maxTempForCity);
+            WeatherByDate maxTemps = new WeatherByDate();
+            maxTemps.setTemp(maxTempForCity);
+            maxTemps.setName(getCityName(key));
+            maxTempList.add(maxTemps);
         }
+        return maxTempList;
+    }
+    public List<WeatherByDate> findMinTemps(Map<Integer, List<Double>> map) {
+        List<WeatherByDate> minTempList = new ArrayList<>();
 
+        for (Integer key : map.keySet()) {
+            List<Double> value = map.get(key);
+            List<Object> list = new ArrayList<>();
+            list.add(value);
+            log.info("city = {}{}", getCityName(key), list);
+            Double minTempForCity = min(value);
+            log.info("Min = {}", minTempForCity);
+            WeatherByDate minTemps = new WeatherByDate();
+            minTemps.setTemp(minTempForCity);
+            minTemps.setName(getCityName(key));
+            minTempList.add(minTemps);
         }
-    return list;
-*/
-
-
-
+        return minTempList;
+    }
 }
+
+

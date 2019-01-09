@@ -8,9 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 
 @Slf4j
 @RestController
@@ -27,29 +24,13 @@ public class WeatherController {
 
     }
 
-    @RequestMapping(value = "/weather/{dateInput}/{minOrMax}", method = RequestMethod.GET)
+    @RequestMapping(value = "/weather/{dateInput}/{isMax}", method = RequestMethod.GET)
     public List<WeatherByDate> getTempsByDate(@PathVariable String dateInput, @PathVariable Boolean isMax){
-        /*if (isMax == true) {
-            List<WeatherByDate> all = weatherService.getTempsByDate(dateInput);
-            for (WeatherByDate source : all ){
+        if (isMax) return weatherService.getMaxTemps(dateInput);
 
-                all.stream()
-                        .max(Comparator.comparing(WeatherByDate::getTemp))
-                        .orElseThrow(NoSuchElementException::new);
-                List<WeatherByDate> maxByTemp = new ArrayList<>();
-                maxByTemp.add()
-            }
-
-            WeatherByDate maxByTemp = weatherService.getTempsByDate(dateInput)
-            return weatherService.getTempsByDate(dateInput).stream()
-                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                    .entrySet().stream().filter(x -> x.getValue() == 1 )
-                    .map(x -> x.getKey())
-                    .collect(Collectors.toList());
-         }
-*/
-        return weatherService.getTempsByDate(dateInput);
-    }
+        else return weatherService.getMinTemps(dateInput);
+        }
 
 }
+
 
