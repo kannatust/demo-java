@@ -26,11 +26,8 @@ public class WeatherController {
 
     @RequestMapping(value = "/weather/{dateInput}/{isMax}", method = RequestMethod.GET)
     public List<WeatherByDate> getTempsByDate(@PathVariable String dateInput, @PathVariable Boolean isMax){
-        if (isMax) return weatherService.getMaxTemps(dateInput);
-
-        else return weatherService.getMinTemps(dateInput);
-        }
-
+        return weatherService.getMaxOrMinTemps(dateInput, isMax);
+    }
 }
 
 

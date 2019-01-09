@@ -36,9 +36,7 @@ public class WeatherService {
 
     public List<WeatherStats> getStats(String city) {
         Optional<City> cityFound = cityRepository.findByName(cityTemp(city));
-        log.info("leiti cityFound: {}", cityFound);
         List<Weather> weatherStatsByCity = weatherRepository.findByCityId(cityFound.get().getId());
-        log.info("weatherStatsByCity: {}", weatherStatsByCity);
         List<WeatherStats> weatherStats = new ArrayList<>();
         for (Weather source : weatherStatsByCity) {
             WeatherStats target = new WeatherStats();
@@ -54,10 +52,7 @@ public class WeatherService {
 
 /* pole vaja nüüd, kus on olemas getMaxTemps ja getMinTemps
     public List<WeatherByDate> getTempsByDate(String dateInput){
-        log.info("StringToCalendar(dateInput) {}", stringToCalendarStart(dateInput), stringToCalendarEnd(dateInput));
         List<Weather> weatherForDate = weatherRepository.findByDate(stringToCalendarStart(dateInput), stringToCalendarEnd(dateInput));
-        log.info("kas kuupäeva kohta on baasis info? {}", weatherForDate);
-
         List<WeatherByDate> weatherStatsByDate = new ArrayList<>();
         for (Weather source : weatherForDate){
             WeatherByDate target = new WeatherByDate();
@@ -65,13 +60,10 @@ public class WeatherService {
             target.setName(city.getName());
             target.setTemp(source.getTemp());
             weatherStatsByDate.add(target);
-            log.info("getTempsByDate meetodist tuli: {}", target);
         }
         return weatherStatsByDate;
-
     }
 */
-
     private Integer getCityId(String city){
         Optional<City> cityFound = cityRepository.findByName(cityTemp(city));
         if (cityFound.isPresent()) {}
@@ -133,39 +125,30 @@ public class WeatherService {
         cal.setTime(stringToDate(dateStr));
         cal.set(Calendar.SECOND, 59);
         cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.HOUR, 59);
+        cal.set(Calendar.HOUR, 23);
         return cal;
     }
 
-    public List<WeatherByDate> getMaxTemps (String dateStr) {
-        List<WeatherByDate> tempsByCityAndDate = new ArrayList<>();
+    public List<WeatherByDate> getMaxOrMinTemps (String dateStr, Boolean isMax) {
+        List<WeatherByDate> tempsByCityAndDate;
         // leian kõik konkreetse kuupäeva tulemused Weather tüüpi listina
         List<Weather> weatherForDate = weatherRepository.findByDate(stringToCalendarStart(dateStr), stringToCalendarEnd(dateStr));
-
         // leian linna tulemused
         Map<Integer, List<Double>> map = findByCityAndDate(weatherForDate);
-
-        // leian linna tulemustest max tempiga tulemuse
-        tempsByCityAndDate = findMaxTemps(map);
-        return tempsByCityAndDate;
-    }
-
-    public List<WeatherByDate> getMinTemps (String dateStr) {
-        List<WeatherByDate> tempsByCityAndDate = new ArrayList<>();
-        // leian kõik konkreetse kuupäeva tulemused Weather tüüpi listina
-        List<Weather> weatherForDate = weatherRepository.findByDate(stringToCalendarStart(dateStr), stringToCalendarEnd(dateStr));
-
-        // leian linna tulemused
-        Map<Integer, List<Double>> map = findByCityAndDate(weatherForDate);
-
-        // leian linna tulemustest min tempiga tulemuse
-        tempsByCityAndDate = findMinTemps(map);
-        return tempsByCityAndDate;
+        log.info("isMax = {}", isMax);
+        if (isMax) {
+            // leian linna tulemustest max tempiga tulemuse
+            tempsByCityAndDate = findMaxOrMinTemps(map, isMax);
+            return tempsByCityAndDate;
+        }
+        else {
+            tempsByCityAndDate = findMaxOrMinTemps(map, isMax);
+            return tempsByCityAndDate;
+        }
     }
 
     public Map<Integer, List<Double>> findByCityAndDate(List<Weather> list) {
         Map<Integer, List<Double>> resultsByCityAndDate = new HashMap<>();
-
         for (Weather source : list){
             WeatherByDate target = new WeatherByDate();
             target.setName(getCityName(source.getCityId()));
@@ -179,44 +162,36 @@ public class WeatherService {
                 resultsByCityAndDate.get(source.getCityId()).add(target.getTemp());
             }
         }
-        log.info("resultsByCityAndDate sees on: {}", resultsByCityAndDate);
         return resultsByCityAndDate;
     }
 
-
-    public List<WeatherByDate> findMaxTemps(Map<Integer, List<Double>> map) {
-        List<WeatherByDate> maxTempList = new ArrayList<>();
-
+    public List<WeatherByDate> findMaxOrMinTemps(Map<Integer, List<Double>> map, Boolean isMax) {
+        List<WeatherByDate> maxOrMinTempList = new ArrayList<>();
         for (Integer key : map.keySet()) {
             List<Double> value = map.get(key);
             List<Object> list = new ArrayList<>();
             list.add(value);
             log.info("city = {}{}", getCityName(key), list);
-            Double maxTempForCity = max(value);
-            log.info("Max = {}", maxTempForCity);
-            WeatherByDate maxTemps = new WeatherByDate();
-            maxTemps.setTemp(maxTempForCity);
-            maxTemps.setName(getCityName(key));
-            maxTempList.add(maxTemps);
-        }
-        return maxTempList;
-    }
-    public List<WeatherByDate> findMinTemps(Map<Integer, List<Double>> map) {
-        List<WeatherByDate> minTempList = new ArrayList<>();
 
-        for (Integer key : map.keySet()) {
-            List<Double> value = map.get(key);
-            List<Object> list = new ArrayList<>();
-            list.add(value);
-            log.info("city = {}{}", getCityName(key), list);
-            Double minTempForCity = min(value);
-            log.info("Min = {}", minTempForCity);
-            WeatherByDate minTemps = new WeatherByDate();
-            minTemps.setTemp(minTempForCity);
-            minTemps.setName(getCityName(key));
-            minTempList.add(minTemps);
+            if (isMax) {
+
+                Double maxTempForCity = max(value);
+                log.info("Max = {}", maxTempForCity);
+                WeatherByDate maxTemps = new WeatherByDate();
+                maxTemps.setTemp(maxTempForCity);
+                maxTemps.setName(getCityName(key));
+                maxOrMinTempList.add(maxTemps);
+            } else {
+                Double minTempForCity = min(value);
+
+                log.info("Min = {}", minTempForCity);
+                WeatherByDate minTemps = new WeatherByDate();
+                minTemps.setTemp(minTempForCity);
+                minTemps.setName(getCityName(key));
+                maxOrMinTempList.add(minTemps);
+            }
         }
-        return minTempList;
+        return maxOrMinTempList;
     }
 }
 
