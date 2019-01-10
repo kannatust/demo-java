@@ -100,6 +100,7 @@ public class WeatherService {
         }
         weather.setCityId(getCityId(city));
         weatherRepository.save(weather);
+        log.info("uus ilmainfo salvestati baasi: {}", weather);
     }
 
     public String cityTemp(String city){

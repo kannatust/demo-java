@@ -1,7 +1,6 @@
 package ee.valiit.demo.demo.connector;
-import ee.valiit.demo.demo.dto.city.CityDto;
+
 import ee.valiit.demo.demo.dto.weather.WeatherDto;
-import ee.valiit.demo.demo.model.weather.Weather;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +16,6 @@ public class WeatherApiConnector {
     @Autowired
     private RestTemplate restTemplate;
 
-
     @Value("${api}")
     private String api;
 
@@ -27,7 +25,6 @@ public class WeatherApiConnector {
     private String units;
 
     public WeatherDto getWeather(String city) {
-        log.info("kuku {}", api);
         ResponseEntity<WeatherDto> getWeather = restTemplate.exchange(api+"weather?q={city}&appid={appId}&units={units}", HttpMethod.GET, null, WeatherDto.class, city, appId, units);
         return getWeather.getBody();
     }
