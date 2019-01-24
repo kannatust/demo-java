@@ -31,12 +31,15 @@ public class WeatherService {
     CityRepository cityRepository;
 
     public WeatherDto getWeather(String city) {
-    return weatherApiConnector.getWeather(cityTemp(city));
+        return weatherApiConnector.getWeather(cityTemp(city));
     }
 
     public List<WeatherStats> getStats(String city) {
         Optional<City> cityFound = cityRepository.findByName(cityTemp(city));
+        log.info("kas kood jõuab siia - cityfound = {}", cityFound);
         List<Weather> weatherStatsByCity = weatherRepository.findByCityId(cityFound.get().getId());
+        log.info("kas kood jõuab siia - weatherStatsByCity= {}", weatherStatsByCity);
+
         List<WeatherStats> weatherStats = new ArrayList<>();
         for (Weather source : weatherStatsByCity) {
             WeatherStats target = new WeatherStats();
@@ -46,6 +49,7 @@ public class WeatherService {
             target.setHumidity(source.getHumidity());
             target.setWindSpeed(source.getWindSpeed());
             weatherStats.add(target);
+            log.info("kas kood jõuab siia - target = {}", target);
         }
         return weatherStats;
     }

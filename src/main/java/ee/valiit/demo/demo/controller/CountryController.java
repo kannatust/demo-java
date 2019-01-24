@@ -18,7 +18,6 @@ public class CountryController {
 
     @RequestMapping(value = "/country/{country}", method = RequestMethod.GET)
     public CountryDto getCity(@PathVariable String country) {
-
         return cityService.getCountryData(country);
     }
 }

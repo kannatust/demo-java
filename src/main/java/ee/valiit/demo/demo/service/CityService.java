@@ -6,13 +6,14 @@ import ee.valiit.demo.demo.dto.country.BaseCountry;
 import ee.valiit.demo.demo.dto.country.CountryDto;
 import ee.valiit.demo.demo.dto.weather.Temps;
 import ee.valiit.demo.demo.dto.weather.WeatherDto;
+import ee.valiit.demo.demo.exception.Error;
+import ee.valiit.demo.demo.exception.GeneralException;
 import ee.valiit.demo.demo.model.city.City;
 import ee.valiit.demo.demo.repository.CityRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,15 +33,15 @@ public class CityService {
     public CountryDto getCountryData(String country) {
         List<BaseCountry> countryData = countryApiConnector.getCity(country);
         CountryDto countryDataWithTemp = new CountryDto();
-        for (BaseCountry source : countryData) {
-            countryDataWithTemp.setName(source.getName());
-            countryDataWithTemp.setCapital(source.getCapital());
-            countryDataWithTemp.setPopulation(source.getPopulation());
-        }
-        WeatherDto weatherForCity = weatherService.getWeather(countryDataWithTemp.getCapital());
-        Temps temps = weatherForCity.getTemps();
-        countryDataWithTemp.setTemp(temps.getTemp());
-        return countryDataWithTemp;
+            for (BaseCountry source : countryData) {
+                countryDataWithTemp.setName(source.getName());
+                countryDataWithTemp.setCapital(source.getCapital());
+                countryDataWithTemp.setPopulation(source.getPopulation());
+            }
+            WeatherDto weatherForCity = weatherService.getWeather(countryDataWithTemp.getCapital());
+            Temps temps = weatherForCity.getTemps();
+            countryDataWithTemp.setTemp(temps.getTemp());
+            return countryDataWithTemp;
     }
 
     public void addCity(CityDto cityDto) {
@@ -54,6 +55,7 @@ public class CityService {
 
     public void deleteCity(String name) {
         Optional<City> cityFound = cityRepository.findByName(weatherService.cityTemp(name));
+        //Optional<City> cityFound = cityRepository.findByName(name);
         log.info("kas linn leiti? {}", cityFound);
         City city = new City();
         city.setId(cityFound.get().getId());

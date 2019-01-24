@@ -1,6 +1,7 @@
 package ee.valiit.demo.demo.controller;
 
 import ee.valiit.demo.demo.dto.weather.WeatherByDate;
+import ee.valiit.demo.demo.dto.weather.WeatherDto;
 import ee.valiit.demo.demo.dto.weather.WeatherStats;
 import ee.valiit.demo.demo.service.WeatherService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,15 @@ public class WeatherController {
     WeatherService weatherService;
 
 
-    @RequestMapping(value = "/weather/{city:[\\D]}", method = RequestMethod.GET)
+    @RequestMapping(value = "/weather/current/{city}", method = RequestMethod.GET)
+    public WeatherDto getWeather(@PathVariable String city) {
+        log.info("kas kood jouab siia {}", city);
+        return weatherService.getWeather(city);
+
+    }
+
+
+    @RequestMapping(value = "/weather/{city}", method = RequestMethod.GET)
     public List<WeatherStats> getStats(@PathVariable String city) {
         log.info("kas kood jouab siia {}", city);
         return weatherService.getStats(city);
