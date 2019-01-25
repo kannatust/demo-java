@@ -9,5 +9,6 @@ public class BaseCountry {
     private String name;
     private String capital;
     private Integer population;
+    private String region;
 
 }

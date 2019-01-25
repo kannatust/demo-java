@@ -31,13 +31,13 @@ public class WeatherService {
     CityRepository cityRepository;
 
     public WeatherDto getWeather(String city) {
-        return weatherApiConnector.getWeather(cityTemp(city));
+        return weatherApiConnector.getWeather(cityTemporary(city));
     }
 
     public List<WeatherStats> getStats(String city) {
-        Optional<City> cityFound = cityRepository.findByName(cityTemp(city));
+        City cityFound = cityRepository.findByName(cityTemporary(city));
         log.info("kas kood jõuab siia - cityfound = {}", cityFound);
-        List<Weather> weatherStatsByCity = weatherRepository.findByCityId(cityFound.get().getId());
+        List<Weather> weatherStatsByCity = weatherRepository.findByCityId(cityFound.getId());
         log.info("kas kood jõuab siia - weatherStatsByCity= {}", weatherStatsByCity);
 
         List<WeatherStats> weatherStats = new ArrayList<>();
@@ -69,9 +69,9 @@ public class WeatherService {
     }
 */
     private Integer getCityId(String city){
-        Optional<City> cityFound = cityRepository.findByName(cityTemp(city));
-        if (cityFound.isPresent()) {}
-        return cityFound.get().getId();
+        City cityFound = cityRepository.findByName(cityTemporary(city));
+        if (cityFound != null) {}
+        return cityFound.getId();
     }
 
     private String getCityName(Integer id) {
@@ -107,7 +107,7 @@ public class WeatherService {
         log.info("uus ilmainfo salvestati baasi: {}", weather);
     }
 
-    public String cityTemp(String city){
+    public String cityTemporary(String city){
         String s = city.substring(0,1).toUpperCase() + city.substring(1).toLowerCase();
         return s;
     }

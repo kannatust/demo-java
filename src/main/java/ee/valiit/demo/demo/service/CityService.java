@@ -7,7 +7,7 @@ import ee.valiit.demo.demo.dto.country.CountryDto;
 import ee.valiit.demo.demo.dto.weather.Temps;
 import ee.valiit.demo.demo.dto.weather.WeatherDto;
 import ee.valiit.demo.demo.exception.Error;
-import ee.valiit.demo.demo.exception.GeneralException;
+import ee.valiit.demo.demo.exception.ValidationException;
 import ee.valiit.demo.demo.model.city.City;
 import ee.valiit.demo.demo.repository.CityRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -32,35 +31,51 @@ public class CityService {
 
     public CountryDto getCountryData(String country) {
         List<BaseCountry> countryData = countryApiConnector.getCity(country);
+        BaseCountry region = new BaseCountry();
+        log.info("countryData = {}", countryData);
         CountryDto countryDataWithTemp = new CountryDto();
             for (BaseCountry source : countryData) {
                 countryDataWithTemp.setName(source.getName());
                 countryDataWithTemp.setCapital(source.getCapital());
                 countryDataWithTemp.setPopulation(source.getPopulation());
+                region.setRegion(source.getRegion());
             }
-            WeatherDto weatherForCity = weatherService.getWeather(countryDataWithTemp.getCapital());
-            Temps temps = weatherForCity.getTemps();
-            countryDataWithTemp.setTemp(temps.getTemp());
+            if (region.getRegion().equals("Europe")) {
+                WeatherDto weatherForCity = weatherService.getWeather(countryDataWithTemp.getCapital());
+                Temps temps = weatherForCity.getTemps();
+                countryDataWithTemp.setTemp(temps.getTemp());
+            }
             return countryDataWithTemp;
     }
 
-    public void addCity(CityDto cityDto) {
-        Optional<City> cityFound = cityRepository.findByName(cityDto.getName());
-        if (!cityFound.isPresent()) {
-            City city = new City();
-            city.setName(weatherService.cityTemp(cityDto.getName()));
-            cityRepository.save(city);
+    public City addCity(CityDto cityDto) {
+        City cityInput = cityRepository.findByName(cityDto.getName());
+        log.info("cityInput = {}", cityInput);
+
+        if (cityInput != null) {
+            throw new ValidationException("City already exists", Error.Code.ALREADY_EXISTS);
         }
+
+        City city = new City();
+        city.setName(weatherService.cityTemporary(cityDto.getName()));
+        City newCity = cityRepository.save(city);
+
+        return newCity;
      }
 
     public void deleteCity(String name) {
-        Optional<City> cityFound = cityRepository.findByName(weatherService.cityTemp(name));
-        //Optional<City> cityFound = cityRepository.findByName(name);
+        City cityFound = cityRepository.findByName(weatherService.cityTemporary(name));
         log.info("kas linn leiti? {}", cityFound);
-        City city = new City();
-        city.setId(cityFound.get().getId());
-        city.setName(weatherService.cityTemp(name));
-        log.info("Kas citysse konverditi? {}", city);
-        cityRepository.delete(city);
+
+        if (cityFound != null) {
+            City city = new City();
+            city.setId(cityFound.getId());
+            city.setName(weatherService.cityTemporary(name));
+            log.info("Kas citysse konverditi? {}", city);
+            cityRepository.delete(city);
+        }
+        else {
+            throw new ValidationException("No such city in database", Error.Code.NOT_FOUND);
+        }
     }
 }

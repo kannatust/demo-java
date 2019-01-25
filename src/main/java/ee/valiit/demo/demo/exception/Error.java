@@ -4,7 +4,9 @@ public class Error {
 
     public enum Code {
         NOT_FOUND(Type.NOT_FOUND),
-        NO_RESPONSE(Type.NO_RESPONSE);
+        NO_RESPONSE(Type.NO_RESPONSE),
+        ALREADY_EXISTS(Type.ALREADY_EXISTS);
+
 
         private final Type type;
 
@@ -23,6 +25,7 @@ public class Error {
     public enum Type {
         NOT_FOUND,
         NO_RESPONSE,
+        ALREADY_EXISTS,
 
     }
 }
